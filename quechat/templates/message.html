@@ -1,0 +1,109 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat Room</title>
+    <link rel="stylesheet" href="{% static 'css/message.css' %}">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="{% url 'home' %}">Home</a>
+    </nav>
+
+    <h1>{{room.room_name}}</h1>
+
+    <div class="chat__item__container" id="id_chat_item_container">
+        <!-- Display old messages from the context -->
+        {% for message in messages %}
+            <div class="chat-message" 
+                {% if message.sender.username == request.user.username %} 
+                    style="justify-content: flex-end;" 
+                {% else %} 
+                    style="justify-content: flex-start;" 
+                {% endif %}>
+                <div class="message-content 
+                    {% if message.sender.username == request.user.username %} 
+                        current-user 
+                    {% else %} 
+                        other-user 
+                    {% endif %}">
+                    <strong>{{ message.sender.username }}:</strong> {{ message.message }}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div id="message-input-container">
+        <input type="text" id="id_message_send_input" placeholder="Type your message..." />
+        <button type="submit" id="id_message_send_button">Send Message</button>
+    </div>
+
+    <!-- Audio element for notification sound -->
+    <audio id="notificationSound" src="{% static 'audio/notify.mp3' %}" preload="auto"></audio>
+
+    <script>
+        const roomName = window.location.pathname.split('/')[2];
+        const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+        const chatSocket = new WebSocket(`${protocol}://${window.location.host}/ws/chat/${roomName}/`);
+
+        chatSocket.onopen = function() {
+            console.log("The WebSocket connection is open!");
+        };
+
+        chatSocket.onclose = function() {
+            console.log("The WebSocket connection was closed.");
+        };
+
+        chatSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            const messageContainer = document.createElement("div");
+            const messageContent = document.createElement("div");
+
+            messageContainer.classList.add("chat-message");
+            messageContent.classList.add("message-content");
+
+            // Check if the message author is the current user
+            if (data.username === "{{ request.user.username }}") {
+                messageContent.classList.add("current-user");
+                messageContainer.style.justifyContent = "flex-end";
+            } else {
+                messageContent.classList.add("other-user");
+            }
+
+            messageContent.innerHTML = `<strong>${data.username}:</strong> ${data.message}`;
+            messageContainer.appendChild(messageContent);
+
+            // Append the message to the chat container and scroll to the latest message
+            const chatContainer = document.getElementById("id_chat_item_container");
+            chatContainer.appendChild(messageContainer);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            // Play notification sound
+            const notificationSound = document.getElementById("notificationSound");
+            notificationSound.play();
+        };
+
+        document.querySelector("#id_message_send_input").focus();
+        document.querySelector("#id_message_send_input").onkeyup = function(e) {
+            if (e.keyCode === 13) {
+                document.querySelector("#id_message_send_button").click();
+            }
+        };
+
+        document.querySelector("#id_message_send_button").onclick = function() {
+            const messageInput = document.querySelector("#id_message_send_input").value;
+            if (messageInput.trim()) {
+                chatSocket.send(
+                    JSON.stringify({
+                        message: messageInput,
+                        username: "{{ request.user.username }}",
+                    })
+                );
+                document.querySelector("#id_message_send_input").value = "";
+            }
+        };
+    </script>
+</body>
+</html>

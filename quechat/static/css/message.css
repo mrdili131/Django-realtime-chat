@@ -1,0 +1,107 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #f4f7f9;
+    margin: 0;
+    padding: 20px;
+}
+h1 {
+    color: #007acc;
+    text-align: center;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+.chat__item__container {
+    width: 90%;
+    max-width: 600px;
+    height: 400px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+    overflow-y: auto;
+    background-color: #fff;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+.chat-message {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+.message-content {
+    max-width: 75%;
+    padding: 10px;
+    border-radius: 8px;
+    line-height: 1.4;
+    word-wrap: break-word;
+}
+.current-user {
+    background-color: #007acc;
+    color: #fff;
+    margin-left: auto;
+    text-align: right;
+}
+.other-user {
+    background-color: #e0e0e0;
+    color: #333;
+    text-align: left;
+}
+#message-input-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 90%;
+    max-width: 600px;
+    margin-top: 20px;
+}
+#id_message_send_input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px 0 0 4px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+#id_message_send_button {
+    padding: 10px;
+    font-size: 16px;
+    background-color: #007acc;
+    color: #fff;
+    border: none;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+#id_message_send_button:hover {
+    background-color: #005fa3;
+}
+/* Responsive design for mobile */
+@media (max-width: 600px) {
+    .chat__item__container {
+        width: 100%;
+        height: 300px;
+    }
+    #id_message_send_input {
+        font-size: 14px;
+        padding: 8px;
+    }
+    #id_message_send_button {
+        font-size: 14px;
+        padding: 8px;
+    }
+}
+/* Navbar Customization */
+.navbar {
+    width: 100%;
+    background-color: #f8f9fa;
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 10px 15px;
+}
+.navbar .navbar-brand {
+    font-size: 1.5rem;
+    margin-left: 0;
+}

@@ -1,0 +1,43 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enter Room</title>
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+</head>
+<body>
+    <h1>Join or Create a Room</h1>
+    <br><br>
+
+    <div class="form-container">
+        <form method="post">
+            {% csrf_token %}
+            <input type="text" name="room_name" placeholder="Enter room name" required>
+            <button type="submit">Join Room</button>
+        </form>
+    </div>
+
+    <div class="room-list">
+        <h2>Available Rooms</h2>
+        {% if rooms %}
+            {% for room in rooms %}
+                <a href="{% url 'message' room.room_name %}">{{ room.room_name }}</a>
+            {% endfor %}
+        {% else %}
+            <p>No rooms available. Create a new room to get started!</p>
+        {% endif %}
+
+
+        <br><br><br>
+
+        
+        {% if request.user.is_authenticated %}
+        <center><a href="{% url 'auth:logout' %}">Logout</a></center>
+        {% else %}
+            <center><a href="{% url 'auth:login' %}">Login</a></center>
+        {% endif %}
+    </div>
+</body>
+</html>
